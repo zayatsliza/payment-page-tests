@@ -24,6 +24,17 @@
             <artifactId>guava</artifactId>
             <version>33.3.1-jre</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>selenide</artifactId>
+            <version>7.6.0</version>
+        </dependency>
     </dependencies>
 
 </project>

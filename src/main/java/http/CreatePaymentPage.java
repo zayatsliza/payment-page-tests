@@ -3,10 +3,10 @@ package http;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -18,7 +18,10 @@ import java.util.stream.Collectors;
 
 public class CreatePaymentPage {
 
-    private URL upstreamURL;
+    private String upstreamURL;
+    private String publicKey;
+    private String secretKey;
+
     private String signature;
     private String orderId;
     private Integer amount;
@@ -58,12 +61,12 @@ public class CreatePaymentPage {
     private String termsUrl;
     private String backUrl;
 
-    private static final String PUBLIC_KEY = System.getProperty("PUBLIC_KEY");
-    private static final String SECRET_KEY = System.getProperty("SECRET_KEY");
-    private static final String ENDPOINT = "/api/v1/init";
+   private static final String ENDPOINT = "/api/v1/init";
 
-    public CreatePaymentPage(URL url) {
+    public CreatePaymentPage(String url, String pbKey, String sbKey) {
         this.upstreamURL = url;
+        this.publicKey = pbKey;
+        this.secretKey = sbKey;
     }
 
     public CreatePaymentPage withOrderId(String orderId) {
@@ -248,8 +251,8 @@ public class CreatePaymentPage {
         return this;
     }
 
-    public void build() {
-        createPaymentPage(
+    public String build() {
+        return createPaymentPage(
                 orderId != null ? orderId : String.valueOf(UUID.randomUUID()),
                 amount != null ? amount : 1,
                 currency != null ? currency : "USD",
@@ -331,23 +334,26 @@ public class CreatePaymentPage {
                 backUrl
         );
         String requestBody = new GsonBuilder().setPrettyPrinting().create().toJson(requestBodyObject);
-        signature = SignatureGenerator.generateSignature(PUBLIC_KEY, requestBody, SECRET_KEY);
+
+        signature = SignatureGenerator.generateSignature(publicKey, requestBody, secretKey);
         HttpRequest request = HttpRequest.newBuilder(URI.create(upstreamURL + ENDPOINT))
-                .header("merchant", PUBLIC_KEY).header("signature", signature)
-                .POST(HttpRequest.BodyPublishers.ofString(
-                        requestBody
-                )).build();
+                .header("merchant", publicKey).header("signature", signature)
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
         HttpResponse<String> response;
+        String paymentPageUrl = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.printf("Finished with status code: %s. And response body: %s", response.statusCode(), response.body());
+            String body = response.body();
+            System.out.printf("Finished with status code: %s. And response body: %s", response.statusCode(), body);
+            paymentPageUrl = JsonParser.parseString(body).getAsJsonObject().get("url").getAsString();
         }
         catch (IOException | InterruptedException e) {
             System.out.println("Post request is failed. See exception message below.");
             System.out.println(e.getMessage());
         }
 
-        return " ";
+        return paymentPageUrl;
     }
 
     private JsonObject getJsonBody(String orderId, int amount, String currency, String orderDescription, String orderItems, String orderDate, Integer orderNumber, String type, Integer settleInterval, Integer retryAttempt, Boolean force3ds, String[] googlePayAllowedAuthMethods, String customerDateOfBirth, String customerEmail, String customerFirstName, String customerLastName, String customerPhone, String trafficSource, String transactionSource, String purchaseCountry, String geoCountry, String geoCity, String language, String website, Map<String, String> orderMetadata, String successUrl, String failUrl, String publicName, String orderTitle, String[] paymentsMethods, String buttonFontColor, String buttonColor, String fontName, Boolean isCardholderVisible, String termsUrl, String backUrl) {
