@@ -2,32 +2,35 @@ package ui.pageObjects;
 
 import com.codeborne.selenide.SelenideElement;
 
-import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Condition.enabled;
 
-public class PaymentPage {
+public class PaymentPage extends BasePage {
 
-    private SelenideElement cardNumberField = $("input[name='cardNumber']");
-    private SelenideElement cardExpiryDateField = $("input[name='cardExpiryDate']");
-    private SelenideElement cardCvvField = $("input[name='cardCvv']");
-    private SelenideElement cardHolderField = $("input[name='cardHolder']");
-    private SelenideElement submitButton = $("button[data-testid='submit']");
+    private final SelenideElement cardNumberField = $("input[name='cardNumber']");
+    private final SelenideElement cardExpiryDateField = $("input[name='cardExpiryDate']");
+    private final SelenideElement cardCvvField = $("input[name='cardCvv']");
+    private final SelenideElement cardHolderField = $("input[name='cardHolder']");
+    private final SelenideElement submitButton = $("button[data-testid='submit']");
 
-    public void typeCardNumber(String cardNumber) {
-        cardNumberField.shouldBe(visible).type(cardNumber);
+    public PaymentPage typeCardNumber(String cardNumber) {
+        typeIntoField(cardNumberField, cardNumber);
+        return this;
     }
 
-    public void typeCardExpiryDate(String expiryDate) {
-        cardExpiryDateField.shouldBe(visible).type(expiryDate);
+    public PaymentPage typeCardExpiryDate(String expiryDate) {
+        typeIntoField(cardExpiryDateField, expiryDate);
+        return this;
     }
 
-    public void typeCardCvv(String cvv) {
-        cardCvvField.shouldBe(visible).type(cvv);
+    public PaymentPage typeCardCvv(String cvv) {
+        typeIntoField(cardCvvField, cvv);
+        return this;
     }
 
-    public void typeCardHolder(String cardHolder) {
-        cardHolderField.shouldBe(visible).type(cardHolder);
+    public PaymentPage typeCardHolder(String cardHolder) {
+        typeIntoField(cardHolderField, cardHolder);
+        return this;
     }
 
     public void clickSubmitButton() {

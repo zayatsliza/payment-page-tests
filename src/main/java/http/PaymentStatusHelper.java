@@ -19,7 +19,7 @@ public class PaymentStatusHelper {
     private String secretKey;
 
     private String orderId;
-    private static String endpoint = "/api/v1/status";
+    private final static String ENDPOINT = "/api/v1/status";
 
     public PaymentStatusHelper(String url, String pbKey, String sbKey) {
         this.targetUrl = url;
@@ -43,7 +43,7 @@ public class PaymentStatusHelper {
 
         String signature = SignatureGenerator.generateSignature(publicKey, requestBody, secretKey);
         HttpClient client = HttpClientFactory.create();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(targetUrl + endpoint))
+        HttpRequest request = HttpRequest.newBuilder(URI.create(targetUrl + ENDPOINT))
                 .header("merchant", publicKey).header("signature", signature)
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();

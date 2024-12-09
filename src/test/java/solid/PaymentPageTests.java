@@ -1,6 +1,7 @@
 package solid;
 
-import http.CreatePaymentPage;
+import enums.Currency;
+import http.PaymentPageBuilder;
 import http.PaymentStatusHelper;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -15,28 +16,24 @@ import java.util.UUID;
 import static com.codeborne.selenide.Selenide.open;
 import static java.util.Map.entry;
 
-public class PaymentPageTests {
+public class PaymentPageTests extends BaseTest {
 
     private String paymentPageUrl;
     private String orderId;
 
-    private static final String PUBLIC_KEY = System.getProperty("PUBLIC_KEY") != null ? System.getProperty("PUBLIC_KEY") : "api_pk_5d778083_145f_4ce9_b16c_ef3c35ab8e9a";
-    private static final String SECRET_KEY = System.getProperty("SECRET_KEY") != null ? System.getProperty("SECRET_KEY") : "api_sk_cc75abdd_2b80_4986_8b23_9c5399f307ca";
-
-
     private PaymentPage paymentPage = new PaymentPage();
     private PaymentStatusPage paymentStatusPage = new PaymentStatusPage();
-    private CreatePaymentPage createPaymentPage = new CreatePaymentPage("https://payment-page.solidgate.com", PUBLIC_KEY, SECRET_KEY);
+    private PaymentPageBuilder paymentPageBuilder  = new PaymentPageBuilder("https://payment-page.solidgate.com", PUBLIC_KEY, SECRET_KEY);
     private PaymentStatusHelper paymentStatusHelper = new PaymentStatusHelper("https://pay.solidgate.com", PUBLIC_KEY, SECRET_KEY);
 
     @BeforeTest
     private void pageInit() {
         String[] googlePayAuthMethods = {"PAN_ONLY"};
         orderId = String.valueOf(UUID.randomUUID());
-        paymentPageUrl = createPaymentPage
+        paymentPageUrl = paymentPageBuilder
                 .withOrderId(orderId)
                 .withAmount(1023)
-                .withCurrency("UAH")
+                .withCurrency(Currency.UAH.name())
                 .withOrderDescription("Tratata order")
                 .withOrderItems("item1 x 1", "item2 x 3")
                 .withOrderDate(LocalDateTime.now())
@@ -77,11 +74,11 @@ public class PaymentPageTests {
 
     @Test
     void paymentTransactionSuccess() {
-        paymentPage.typeCardNumber("4067429974719265");
-        paymentPage.typeCardExpiryDate("12/26");
-        paymentPage.typeCardCvv("123");
-        paymentPage.typeCardHolder("Bob Brown");
-        paymentPage.clickSubmitButton();
+        paymentPage.typeCardNumber("4067429974719265")
+                .typeCardExpiryDate("12/26")
+                .typeCardCvv("123")
+                .typeCardHolder("Bob Brown")
+                .clickSubmitButton();
         paymentStatusPage.statusShouldBeVisible();
         paymentStatusPage.successTitleShouldBeVisible();
         Map<String, String> statusData = paymentStatusHelper.withOrderId(orderId).build();

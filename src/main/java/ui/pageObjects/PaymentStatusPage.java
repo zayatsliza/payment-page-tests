@@ -6,22 +6,21 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Condition.text;
 
-public class PaymentStatusPage {
-    private SelenideElement statusPage = $("div[class*='PaymentPage_status_']");
-    private SelenideElement statusSuccessTitle = $("[class*='StatusSuccess_title']");
-    private SelenideElement priceView = $("div[data-testid*='status-order-price'] div[data-testid='price_major']");
+public class PaymentStatusPage extends BasePage {
+    private final SelenideElement statusPage = $("div[class*='PaymentPage_status_']");
+    private final SelenideElement statusSuccessTitle = $("[class*='StatusSuccess_title']");
+    private final SelenideElement priceView = $("div[data-testid*='status-order-price'] div[data-testid='price_major']");
     public void statusShouldBeVisible() {
         statusPage.shouldBe(visible, Duration.ofSeconds(10));
     }
 
     public void priceShouldBe(String price) {
-        priceView.shouldHave(text(price));
+        fieldShouldContainText(priceView, price);
     }
 
     public void currencyShouldBe(String currency) {
-        priceView.shouldHave(text(currency));
+        fieldShouldContainText(priceView, currency);
     }
 
     public void successTitleShouldBeVisible() {
