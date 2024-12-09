@@ -1,4 +1,4 @@
-package http;
+package rest_api.services.payment_page_service;
 
 import enums.Currency;
 
@@ -242,7 +242,7 @@ public class PaymentPageBuilder {
     }
 
     public String build() {
-        return new CreatePaymentPage(upstreamURL, publicKey, secretKey)
+        return new CreatePaymentPageReq(upstreamURL, publicKey, secretKey)
                 .createPaymentPage(this);
     }
 

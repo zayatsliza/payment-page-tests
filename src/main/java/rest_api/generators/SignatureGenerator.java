@@ -1,4 +1,4 @@
-package http;
+package rest_api.generators;
 
 import com.google.common.hash.Hashing;
 

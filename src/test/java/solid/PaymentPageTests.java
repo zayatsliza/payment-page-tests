@@ -1,12 +1,12 @@
 package solid;
 
 import enums.Currency;
-import http.PaymentPageBuilder;
-import http.PaymentStatusHelper;
+import rest_api.services.payment_page_service.PaymentPageBuilder;
+import rest_api.services.payment_status_service.PaymentStatusBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import ui.pageObjects.PaymentPage;
-import ui.pageObjects.PaymentStatusPage;
+import ui.page_objects.PaymentPage;
+import ui.page_objects.PaymentStatusPage;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ public class PaymentPageTests extends BaseTest {
     private PaymentPage paymentPage = new PaymentPage();
     private PaymentStatusPage paymentStatusPage = new PaymentStatusPage();
     private PaymentPageBuilder paymentPageBuilder  = new PaymentPageBuilder("https://payment-page.solidgate.com", PUBLIC_KEY, SECRET_KEY);
-    private PaymentStatusHelper paymentStatusHelper = new PaymentStatusHelper("https://pay.solidgate.com", PUBLIC_KEY, SECRET_KEY);
+    private PaymentStatusBuilder paymentStatusBuilder = new PaymentStatusBuilder("https://pay.solidgate.com", PUBLIC_KEY, SECRET_KEY);
 
     @BeforeTest
     private void pageInit() {
@@ -81,7 +81,7 @@ public class PaymentPageTests extends BaseTest {
                 .clickSubmitButton();
         paymentStatusPage.statusShouldBeVisible();
         paymentStatusPage.successTitleShouldBeVisible();
-        Map<String, String> statusData = paymentStatusHelper.withOrderId(orderId).build();
+        Map<String, String> statusData = paymentStatusBuilder.withOrderId(orderId).build();
         String expectedAmount = formatAmount(statusData.get("amount"));
         paymentStatusPage.priceShouldBe(expectedAmount);
         paymentStatusPage.currencyShouldBe(statusData.get("currency"));

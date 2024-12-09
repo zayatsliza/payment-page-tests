@@ -1,4 +1,4 @@
-package http;
+package rest_api;
 
 import java.net.http.HttpClient;
 
@@ -9,7 +9,7 @@ public class HttpClientFactory {
 
     }
 
-    static HttpClient create() {
+    public static HttpClient create() {
         if (client == null) {
             client = HttpClient.newHttpClient();
         }

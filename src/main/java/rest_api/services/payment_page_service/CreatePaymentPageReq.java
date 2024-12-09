@@ -1,9 +1,11 @@
-package http;
+package rest_api.services.payment_page_service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import rest_api.HttpClientFactory;
+import rest_api.generators.SignatureGenerator;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,7 +14,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
 
-public class CreatePaymentPage {
+public class CreatePaymentPageReq {
 
     private String upstreamURL;
     private String publicKey;
@@ -22,7 +24,7 @@ public class CreatePaymentPage {
 
     private static final String ENDPOINT = "/api/v1/init";
 
-    public CreatePaymentPage(String url, String pbKey, String sbKey) {
+    public CreatePaymentPageReq(String url, String pbKey, String sbKey) {
         this.upstreamURL = url;
         this.publicKey = pbKey;
         this.secretKey = sbKey;

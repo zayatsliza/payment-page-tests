@@ -1,8 +1,10 @@
-package http;
+package rest_api.services.payment_status_service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import rest_api.HttpClientFactory;
+import rest_api.generators.SignatureGenerator;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,31 +14,20 @@ import java.net.http.HttpResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PaymentStatusHelper {
+public class FetchPaymentStatusReq {
 
     private String targetUrl;
     private String publicKey;
     private String secretKey;
-
-    private String orderId;
     private final static String ENDPOINT = "/api/v1/status";
 
-    public PaymentStatusHelper(String url, String pbKey, String sbKey) {
+    public FetchPaymentStatusReq(String url, String pbKey, String sbKey) {
         this.targetUrl = url;
         this.publicKey = pbKey;
         this.secretKey = sbKey;
     }
 
-    public PaymentStatusHelper withOrderId(String orderId) {
-        this.orderId = orderId;
-        return this;
-    }
-
-    public Map<String, String> build() {
-        return getPaymentStatus(orderId);
-    }
-
-    private Map<String, String> getPaymentStatus(String orderId) {
+    protected Map<String, String> fetchPaymentStatus(String orderId) {
         Map<String, String> requestAttr = new LinkedHashMap<>();
         requestAttr.put("order_id", orderId);
         String requestBody = new Gson().toJson(requestAttr);
